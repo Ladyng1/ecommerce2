@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Signup{% endblock title %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="col-lg-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="mb-4 text-center">Join Today</h1>
+
+                <form method="post" action=".">
+                    {% csrf_token %}
+
+                    <!-- Display non-field errors -->
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        {{ form.username }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        {{ form.password1 }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Repeat Password
+                        </label>
+                        {{ form.password2 }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg btn-block">Signup</button>
+                </form>
+                <br>
+                <div><small>Already have an account? <a href="{% url 'core:login' %}" class="text-decoration-none">Login</a></small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

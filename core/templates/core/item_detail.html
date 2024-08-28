@@ -1,0 +1,165 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Signup{% endblock title %}
+
+{% block content %}
+
+<h1>{{product.name}} Detail</h1>
+
+<div class="py-5 bg-body-secondary rounded">
+ <div class="container">
+   <div class="row mx-5">
+     <div class="col-md-8">
+       <img src="{{product.image.url}}" class="img-fluid rounded" width="100%">
+     </div>
+     <div class="col-md-4">
+        <!-- Add more details about the item here -->
+        <h2>{{product.name}}</h2>
+         <br>
+        <p><strong>Price: </strong> ₦ {{product.price}}</p>
+         <p>ID: {{product.id}} </p>
+        <p><strong>Description:</strong><br>
+        </p>{{product.description}}</p>
+         <br>
+        <p><strong>Vendor: </strong>@{{product.created_by.username}}</p>
+        <!-- if the requesting user is the product owner-->
+         {% if request.user == product.created_by %}
+             <a href="{% url 'core:update-product' product.id %}" type="button" class="btn btn-md btn-outline-success">Edit</a>
+             <a href="delete item" type="button" class="btn btn-md btn-outline-danger">Delete</a>
+
+         <!-- otherwise -->
+         {% else %}
+        <div class="row justify-content-start">
+            <div class="col-md-8">Select Quantity:</div>
+            <div class="col-md-8">
+            <select class="form-select" id="select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+            </div>
+        </div>
+
+        <br><br>
+
+         <a href="{% url 'conversation:new' product.id %}" class="btn btn-secondary">Contact Seller</a>
+         <button type="button" value="{{ product.id }}" class="btn btn-success" id="add-button">Add to Cart</button>
+
+         <!-- end here -->
+         {% endif %}
+        </div>
+     </div>
+   </div>
+ </div>
+    <br>
+    <hr>
+    <br>
+    <h1 class="">Related Items</h1>
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+             {% if related_products %}
+                {% for product in related_products %}
+                <div class="col">
+                <div class="card shadow-sm">
+                    <img src="{{product.image.url}}" alt="" width="100%" height="225">
+                    <div class="card-body">
+                        <p class="card-text"> {{product.name}}</p>
+                        <p class="card-text">$ {{product.price}}</p>
+                        <p class="card-text"><strong>Category: </strong>{{product.category.name}}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+
+                                {% if request.user == product.created_by %}
+                                <a href="products detail with pk" type="button"
+                                   class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="{% url 'core:update-product' product.id %}" type="button" class="btn btn-sm btn-outline-success">Edit</a>
+                                <a href="products delete' with pk" type="button" class="btn btn-sm btn-outline-danger">Delete</a>
+                                {% else %}
+                                <a href="{% url 'core:detail' product.id %}" type="button"
+                                   class="btn btn-sm btn-outline-secondary">View</a>
+                                <button type="button" value="{{ product.id }}" class="btn btn-sm btn-success add button" id="">Add to Cart</button>
+                                <a href="conversation new with pk" type="button"
+                                   class="btn btn-sm btn-outline-secondary">Contact Seller</a>
+                                <!-- add to cart and take the user to check-out page-->
+                                {% endif %}
+                            </div>
+                            <small class="text-body-secondary">@ {{product.created_by.username}} </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                 {% endfor %}
+            {% else %}
+                <p>There are no related items for {{ product.category.name }} category</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<!--AJAX Starts Here-->
+<script>
+    // Add button
+
+    $(document).on('click', '#add-button', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart:cart-add" %}',
+            data: {
+                product_id: $('#add-button').val(),
+                product_quantity: $("#select option:selected").text(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post'
+            },
+
+            success: function(json){
+
+                //console.log(json)
+
+                //Sets the text content of the cart-qty in base.html
+                //test to see if our cart adjusts automatically. remove the 0 for now.
+                document.getElementById("cart-qty").textContent = json.qty
+            },
+
+            error: function(xhr, errmsg, err){
+
+            }
+        });
+    })
+
+    // Add button 2
+    $(document).on('click', '.add-button', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart:cart-add" %}',
+            data: {
+                product_id: $('.add-button').val(),
+                product_quantity: $("#select option:selected").text(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post'
+            },
+
+            success: function(json){
+
+                //console.log(json)
+
+                //Sets the text content of the cart-qty in base.html
+                //test to see if our cart adjusts automatically. remove the 0 for now.
+                document.getElementById("cart-qty").textContent = json.qty
+            },
+
+            error: function(xhr, errmsg, err){
+
+            }
+        });
+    })
+</script>
+
+{% endblock content %}

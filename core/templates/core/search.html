@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+
+{% block title %}Search{% endblock title %}
+
+{% block content %}
+
+<h1>Find Items</h1>
+
+<div class="py-5 bg-body-tertiary">
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <!-- looping over the item -->
+            {% if products %}
+                {% for product in products %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <img src="{{ product.image.url }}" alt="" width="100%" height="225">
+                        <div class="card-body">
+                            <p class="card-text"> {{ product.name }} </p>
+                            <p class="card-text">$ {{ product.price }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'core:detail' product.id %}" type="button"
+                                       class="btn btn-sm btn-outline-secondary">View</a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Buy Now</button>
+                                    <!-- add to cart and take the user to checkout page-->
+                                </div>
+                                <small class="text-body-secondary">@ {{ product.created_by.username }} </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <!-- endfor -->
+            {% else %}
+            <p>No product was found</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

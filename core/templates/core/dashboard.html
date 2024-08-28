@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+
+<h1 class="mt-5">@{{ request.user.username|capfirst }}'s Dashboard</h1>
+
+
+<main role="main" class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+        {% for product in products %}
+        <div class="col">
+            <div class="card shadow-sm">
+                <img src="{{ product.image.url }}" alt="" width="100%" height="225">
+                <div class="card-body bg-dark text-white">
+                    <p class="card-text">{{ product.name }}</p>
+                    <p class="card-text">${{ product.price }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <a href="{% url 'core:detail' product.id %}" type="button"
+                               class="btn btn-sm btn-outline-success">View</a>
+                            <a href="{% url 'core:update-product' product.id %}" type="button"
+                               class="btn btn-sm btn-outline-secondary text-white">Edit</a>
+                            <a href="{% url 'core:delete' product.id %}" type="button"
+                               class="btn btn-sm btn-outline-danger">Delete</a>
+                            <!-- add to cart and take the user to checkout page-->
+                        </div>
+                        <small class="text-body-secondary"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock content %}
+
